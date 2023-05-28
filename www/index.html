@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bella Pizzeria - Electronic Pizza Time Logs</title>
+  <style type="text/css">
+    /* Turn off Touch Feedback */
+    * {
+      -webkit-tap-highlight-color: rbga(255, 255, 255, 0);
+      -webkit-user-select: none;
+    }
+
+    .eptl-loading {
+    	border: 16px solid #F3F3F3;
+    	border-top: 16px solid #CE0000;
+    	border-radius: 50%;
+    	width: 60px;
+    	height: 60px;
+    	animation: spin 1.5s linear infinite;
+    	margin: 25px auto;
+    }
+
+    @keyframes spin {
+    	0% { transform: rotate(0deg); }
+    	100% { transform: rotate(360deg); }
+    }
+
+    #eptlStatus {
+      font-size: 2em;
+      font-family: sans-serif;
+      margin-top: 50px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div id="loadingWrap">
+    <div style="width:100%;height:200px;text-align:center">
+      <img src="logo.png">
+    </div>
+    <div class="eptl-loading"></div>
+    <h2 id="eptlStatus">Initializing...</h2>
+    <p id="eptlUpdateStatus" style="text-align:center"></p>
+  </div>
+
+
+  <script src="js/jquery-1.11.3.min.js"></script>
+  <script>
+  var eptlVersion = '1.5.3';
+  var latestVersion = '1.5.3';
+    document.addEventListener("deviceready", onDeviceReady, false);
+    function onDeviceReady() {
+      window.resolveLocalFileSystemURL(cordova.file.dataDirectory, function (dirEntry) {
+          console.log('Checking EPTL version...');
+          dirEntry.getFile('eptlVersion.txt', {create: false, exclusive: false}, function(fileEntry) {
+            fileEntry.file(function (file) {
+              var reader = new FileReader();
+              reader.onloadend = function() {
+                console.log("EPTL Version: " + this.result);
+                eptlVersion = this.result;
+                checkForUpdates(this.result);
+                //loadEptl();
+              };
+              reader.readAsText(file);
+            }, function() {
+              console.log('ERROR: Failed to read version file');
+            });
+          }, function() {
+            console.log('No EPTL version found!');
+            console.log('Building from '+eptlVersion+' source...');
+            console.log('    * Creating version file...');
+            dirEntry.getFile('eptlVersion.txt', {create: true, exclusive: false}, function(createEntry) {
+              createEntry.createWriter(function (fileWriter) {
+                fileWriter.onwriteend = function() {
+                  console.log("    * Version file created successfully!");
+                  buildFromSource();
+                };
+                fileWriter.onerror = function (e) {
+                  console.log("    * ERROR: Failed file write: " + e.toString());
+                };
+                var dataObj = new Blob([eptlVersion], { type: 'text/plain' });
+                fileWriter.write(dataObj);
+              });
+            }, function() {
+              console.log('    * ERROR: Failed to create version file');
+            });
+          });
+      }, function() {
+        console.log('ERROR: Failed to open file system');
+      });
+    }
+
+    function buildFromSource() {
+      $('#eptlStatus').html('Setting up...');
+      window.resolveLocalFileSystemURL(cordova.file.applicationDirectory+'www/eptl/', function(srcDirEntry) {
+        window.resolveLocalFileSystemURL(cordova.file.dataDirectory, function(dataDirEntry) {
+          window.resolveLocalFileSystemURL(cordova.file.dataDirectory+'eptlSrc/', function(ctDirEntry) {
+            console.log('    * Old source files detected. Removing...');
+            ctDirEntry.removeRecursively(function() {
+              console.log('    * Old source files removed successfully!');
+              copySourceFiles(srcDirEntry, dataDirEntry);
+            }, function() {
+              console.log('    * ERROR: Failed to remove old destination dir!');
+            });
+          }, function() {
+            copySourceFiles(srcDirEntry, dataDirEntry);
+          });
+        }, function() {
+          console.log('    * ERROR: Failed to resolve destination dir');
+        });
+      }, function() {
+        console.log('    * ERROR: Failed to resolve source dir');
+      });
+    }
+
+    function copySourceFiles(srcDirEntry, dataDirEntry) {
+      console.log('    * Copying source files...');
+      srcDirEntry.copyTo(dataDirEntry, 'eptlSrc', function(copiedEntry) {
+        console.log('    * Source files copied successfully!');
+        console.log('Build successful!')
+        checkForUpdates(eptlVersion);
+        //loadEptl();
+      }, function(errObj) {
+        console.log('    * ERROR: Failed to copy source dir!');
+        console.log(errObj);
+      });
+    }
+
+    function checkForUpdates(version) {
+      $('#eptlStatus').html('Checking for updates...');
+      console.log('Checking for updates...');
+      $.ajax({
+        type: 'GET',
+        url: 'https://server.thebellapizza.com/eptl/update.php?check='+eptlVersion,
+        dataType: 'json',
+        success: function(result) {
+          latestVersion = result.latestVersion;
+          console.log('    * Latest version: '+result.latestVersion);
+          console.log('    * Current version: '+eptlVersion);
+          if(latestVersion === eptlVersion) {
+            console.log('No update required!');
+            loadEptl();
+          } else {
+            console.log('Processing updates...');
+            processUpdates(result.updates, 0);
+          }
+        }
+      });
+    }
+
+    function processUpdates(updatesList, sequence) {
+      if(sequence <= updatesList.length - 1) {
+        var tun = sequence + 1;
+        var thisUpdate = updatesList[sequence];
+
+        $('#eptlStatus').html('Updating...');
+        $('#eptlUpdateStatus').html('Installing update '+tun+' of '+updatesList.length);
+        console.log('    * Downloading update '+tun+' of '+updatesList.length);
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function(){
+          if (this.readyState == 4 && this.status == 200) {
+            var blobObj = this.response;
+            console.log('    * Installing update '+tun+' of '+updatesList.length);
+            console.log('        File: '+thisUpdate.file);
+            console.log('        Type: '+blobObj.type);
+            installUpdate(thisUpdate.file, blobObj, tun, updatesList);
+          }
+        }
+        xhr.open('GET', 'https://server.thebellapizza.com/eptl/update.php?getFile='+thisUpdate.file);
+        xhr.responseType = 'blob';
+        xhr.send();
+      } else {
+        console.log('Finished processing updates!');
+        console.log('Updating version file...');
+        updateVersionFile();
+      }
+    }
+
+    function updateVersionFile() {
+      eptlVersion = latestVersion;
+      window.resolveLocalFileSystemURL(cordova.file.dataDirectory, function (dirEntry) {
+        dirEntry.getFile('eptlVersion.txt', {create: true, exclusive: false}, function(createEntry) {
+          createEntry.createWriter(function (fileWriter) {
+            fileWriter.onwriteend = function() {
+              console.log("Version file created successfully!");
+              loadEptl();
+            };
+            fileWriter.onerror = function (e) {
+              console.log("ERROR: Failed file write: " + e.toString());
+            };
+            var dataObj = new Blob([eptlVersion], { type: 'text/plain' });
+            fileWriter.write(dataObj);
+          });
+        }, function() {
+          console.log('ERROR: Failed to create version file');
+        });
+      }, function() {
+        console.log('ERROR: Failed to resolve data directory');
+      });
+    }
+
+    function loadEptl() {
+      console.log('Loading EPTL...');
+      $('#eptlStatus').html('Loading EPTL...');
+      $('#eptlUpdateStatus').html('');
+
+      var urlToLoad = cordova.file.dataDirectory+'eptlSrc/eptl.html';
+      window.location.href = urlToLoad;
+    }
+
+    function installUpdate(uFile, fData, updateNum, updatesList) {
+      var uDir = 'eptlSrc/';
+      var ufType = fData.type;
+      var ufBlob = new Blob([fData], {type: ufType});
+      if(uFile.indexOf('/') !== -1) {
+        var lsi = uFile.lastIndexOf('/') + 1;
+        var udp = uFile.substr(0, lsi);
+        var ufp = uFile.substr(lsi);
+        uDir += udp;
+        uFile = ufp;
+      }
+
+      window.resolveLocalFileSystemURL(cordova.file.dataDirectory+uDir, function (dirEntry) {
+        dirEntry.getFile(uFile, {create: true, exclusive: false}, function(createEntry) {
+          createEntry.createWriter(function (fileWriter) {
+            fileWriter.onwriteend = function() {
+              processUpdates(updatesList, updateNum);
+            };
+            fileWriter.onerror = function (e) {
+              console.log('    * ERROR: Failed to write file: '+uFile+' (Update '+updateNum+' of '+updatesList.length+')');
+            };
+            fileWriter.write(ufBlob);
+          });
+        }, function() {
+          console.log('    * ERROR: Failed to create file: '+uFile+' (Update '+updateNum+' of '+updatesList.length+')');
+        });
+      }, function() {
+        console.log('    * ERROR: Failed to resolve path: '+uDir+' (Update '+updateNum+' of '+updatesList.length+')');
+      });
+    }
+  </script>
+  <script src="js/cordova.js"></script>
+</body>
+</html>

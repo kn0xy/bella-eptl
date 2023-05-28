@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bella Pizzeria - Electronic Pizza Time Logs</title>
+<link href="css/bootstrap.css" rel="stylesheet">
+<link href="css/bootstrap-slider.min.css" rel="stylesheet">
+<link href="css/eptl.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="container-fluid">
+    <div id="eptl-leftCol" class="col-md-4 eptl-col">
+        <div class="row eptl-row" id="eptl-topLeftCell">
+        	<div class="dropdown">
+              <button class="btn btn-default dropdown-toggle" type="button" id="topLeft-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                <span class="glyphicon glyphicon-th-list" aria-hidden="true"></span> &nbsp; <span id="topLeftPage">Add Items</span> &nbsp; <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="topLeft-dropdown">
+                <li id="eptl-tld-addItems" class="disabled"><a href="#"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> &nbsp; Add Items</a></li>
+                <li role="separator" class="divider"></li>
+                <li id="eptl-tld-viewLogs"><a href="#"><span class="glyphicon glyphicon-time" aria-hidden="true"></span> &nbsp; View Logs</a></li>
+                <li role="separator" class="divider"></li>
+                <li id="eptl-tld-settings"><a href="#"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span> &nbsp; Settings</a></li>
+              </ul>
+          </div>
+        </div>
+
+        <div id="eptl-leftCol-contentWrap">
+          <!-- Left bar: Add Items -->
+          <div id="eptl-leftCol-addItems" class="eptl-leftCol-content" style="display:block">
+            <div class="row eptl-row" id="eptl-leftCol-addItems-Pizza">
+                <h2>Pizza<span id="eptl-leftCol-iconPizza" class="glyphicon glyphicon-triangle-bottom eptl-left-icon" aria-hidden="true"></span></h2>
+                <div id="eptl-leftCol-pizzaWH" class="btn-group" role="group" aria-label="pizzaWH">
+                	<button type="button" id="pizzaWH-whole" class="btn btn-danger pizzaWH-selected"><img src="img/pizzaWH-whole.png" width="28" height="28"></button>
+                    <button type="button" id="pizzaWH-left" class="btn btn-default"><img src="img/pizzaWH-left.png" width="28" height="28"></button>
+                    <button type="button" id="pizzaWH-right" class="btn btn-default disabled" disabled="true"><img src="img/pizzaWH-right.png" width="28" height="28"></button>
+                </div>
+                <input type="hidden" id="eptl-pizzaHH-left" value="null">
+                <input type="hidden" id="eptl-pizzaHH-right" value="null">
+            </div>
+            <div class="row eptl-row" id="eptl-leftCol-addItems-Calzone">
+                <h2>Calzones<span id="eptl-leftCol-iconCalzones" class="glyphicon glyphicon-triangle-bottom eptl-left-icon" aria-hidden="true"></span></h2>
+            </div>
+            <div class="row eptl-row" id="eptl-leftCol-addItems-Breadsticks">
+                <h2>Breadsticks<span id="eptl-leftCol-iconBreadsticks" class="glyphicon glyphicon-triangle-bottom eptl-left-icon" aria-hidden="true"></span></h2>
+                <div id="eptl-leftCol-bsQtyWrap">
+                  <label for="eptl-addItems-bsQty">Quantity:</label> &nbsp; <input type="number" id="eptl-addItems-bsQty">
+                  <input id="eptl-addItems-bsQtySlider" data-slider-id='bsQtySlider' type="text" data-slider-min="1" data-slider-max="48" data-slider-step="1">
+                </div>
+            </div>
+            <div id="eptlClock">
+                <p class="eptlTime"></p>
+                <p class="eptlDate"></p>
+            </div>
+
+          </div>
+
+          <!-- Left Bar: View Logs -->
+          <div id="eptl-leftCol-viewLogs" class="eptl-leftCol-content"></div>
+
+          <!-- Left Bar: Settings -->
+          <div id="eptl-leftCol-settings" class="eptl-leftCol-content">
+            <div class="row eptl-row eptl-rowSelected"><h3>General<span class="glyphicon glyphicon-star eptl-left-icon" aria-hidden="true"></span></h3></div>
+            <div class="row eptl-row" id="lbsStats"><h3>Stats</h3></div>
+            <div class="row eptl-row"><h3>Items</h3></div>
+            <div class="row eptl-row"><h3>Advanced</h3></div>
+            <div id="eptlSettings-saveWrap">
+            	<button type="button" class="btn btn-lg btn-success" id="btnSaveSettings"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> &nbsp; Save Settings</button>
+                <button type="button" class="btn btn-lg btn-danger" id="btnCancelSettings"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> &nbsp; Cancel Changes</button>
+            </div>
+          </div>
+        </div>
+    </div>
+
+    <!-- Content: Add Items -->
+    <div id="eptl-contentWrap-addItems" class="eptl-contentWrapper" style="display:block">
+      <div id="eptl-aiWrap-Pizza" class="eptlAiWrap">
+        <button type="button" class="btn btn-default btn-lg">Cheese</button>
+          <button type="button" class="btn btn-default btn-lg">Pepperoni</button>
+          <button type="button" class="btn btn-default btn-lg">Sausage</button>
+          <button type="button" class="btn btn-default btn-lg">Pepperoni<br>Sausage</button>
+          <button type="button" class="btn btn-default btn-lg">Mushroom</button>
+          <button type="button" class="btn btn-default btn-lg">Pepperoni<br>Mushroom</button>
+          <button type="button" class="btn btn-default btn-lg">Sausage<br>Mushroom</button>
+          <button type="button" class="btn btn-default btn-lg">Deluxe</button>
+          <button type="button" class="btn btn-default btn-lg">Meat<br>Lover's</button>
+          <button type="button" class="btn btn-default btn-lg">Margherita</button>
+          <button type="button" class="btn btn-default btn-lg">White</button>
+          <button type="button" class="btn btn-default btn-lg" id="btnStuffedPizza">Stuffed</button>
+          <button type="button" class="btn btn-default btn-lg">Veggie<br>Supreme</button>
+          <button type="button" class="btn btn-default btn-lg">Buffalo<br>Chicken</button>
+          <button type="button" class="btn btn-default btn-lg">BBQ<br>Chicken</button>
+      </div>
+      <div id="eptl-aiWrap-Calzone" class="eptlAiWrap">
+        <button type="button" class="btn btn-default btn-lg">Ham<br>Cheese</button>
+          <button type="button" class="btn btn-default btn-lg">Vegetarian</button>
+          <button type="button" class="btn btn-default btn-lg">Combo</button>
+          <button type="button" class="btn btn-default btn-lg">Stromboli</button>
+          <button type="button" class="btn btn-default btn-lg">Panzerotti</button>
+          <button type="button" class="btn btn-default btn-lg">Spinach<br>Roll</button>
+          <button type="button" class="btn btn-default btn-lg">Chicken<br>Roll</button>
+          <button type="button" class="btn btn-default btn-lg">Pepperoni<br>Roll</button>
+      </div>
+      <div id="eptl-aiWrap-Breadsticks" class="eptlAiWrap">
+        <button type="button" class="btn btn-default btn-lg">Plain</button>
+        <button type="button" class="btn btn-default btn-lg">Pepperoni</button>
+        <button type="button" class="btn btn-default btn-lg">Cheesy<br>Weezy</button>
+        <button type="button" class="btn btn-default btn-lg">Garlic<br>Knots</button>
+      </div>
+
+        <div id="eptl-col-1" class="col-md-3 eptl-col" style="background-color:#00CA59">
+            <div class="row eptl-row" style="background-color:#00CA59"><h2>10:00 - 11:00</h2></div>
+            <div class="row eptlColData" id="eptl-colData-1"></div>
+        </div>
+        <div id="eptl-col-2" class="col-md-3 eptl-col" style="background-color:#FE4245">
+            <div class="row eptl-row" style="background-color:#FE4245"><h2>11:00 - 12:00</h2></div>
+            <div class="row eptlColData" id="eptl-colData-2"></div>
+        </div>
+        <div id="eptl-col-3" class="col-md-3 eptl-col" style="background-color:#FFAF00">
+            <div class="row eptl-row" style="background-color:#FFAF00"><h2>12:00 - 1:00</h2></div>
+            <div class="row eptlColData" id="eptl-colData-3"></div>
+        </div>
+        <div id="eptl-col-4" class="col-md-3 eptl-col eptl-col-last" style="background-color:#0070FF">
+            <div class="row eptl-row" style="background-color:#0070FF"><h2>1:00 - 2:00</h2></div>
+            <div class="row eptlColData" id="eptl-colData-4"></div>
+        </div>
+        <div id="addItemsNotificationsWrapper"></div>
+        <audio id="soundPlayer" src="beep.mp3"></audio>
+    </div>
+
+    <!-- Content: View Logs -->
+    <div id="eptl-contentWrap-viewLogs" class="eptl-contentWrapper">
+        <div id="logWrapper">
+            <div class="logCol" id="logCol-itemName">
+                <div class="row"><strong>Pizza</strong></div>
+                <div id="logColWrap-Pizza" class="logColWrap"></div>
+                <div id="lcwCalzones" class="row"><strong>Calzones</strong></div>
+                <div id="logColWrap-Calzone" class="logColWrap"></div>
+                <div id="lcwBreadsticks" class="row"><strong>Breadsticks</strong></div>
+                <div id="logColWrap-Breadsticks" class="logColWrap"></div>
+            </div>
+            <div class="logCol" id="logCol-9">
+                <div class="row logTimeRow">9:00am</div>
+                <div class="logColWrap lcWrap-Pizza"></div>
+                <div class="row logTimeRow">9:00am</div>
+                <div class="logColWrap lcWrap-Calzone"></div>
+                <div class="row logTimeRow">9:00am</div>
+                <div class="logColWrap lcWrap-Breadsticks"></div>
+            </div>
+            <div class="logCol" id="logCol-10">
+                <div class="row logTimeRow">10:00am</div>
+                <div class="logColWrap lcWrap-Pizza"></div>
+                <div class="row logTimeRow">10:00am</div>
+                <div class="logColWrap lcWrap-Calzone"></div>
+                <div class="row logTimeRow">10:00am</div>
+                <div class="logColWrap lcWrap-Breadsticks"></div>
+            </div>
+            <div class="logCol" id="logCol-11">
+                <div class="row logTimeRow">11:00am</div>
+                <div class="logColWrap lcWrap-Pizza"></div>
+                <div class="row logTimeRow">11:00am</div>
+                <div class="logColWrap lcWrap-Calzone"></div>
+                <div class="row logTimeRow">11:00am</div>
+                <div class="logColWrap lcWrap-Breadsticks"></div>
+            </div>
+            <div class="logCol" id="logCol-12">
+                <div class="row logTimeRow">12:00pm</div>
+                <div class="logColWrap lcWrap-Pizza"></div>
+                <div class="row logTimeRow">12:00pm</div>
+                <div class="logColWrap lcWrap-Calzone"></div>
+                <div class="row logTimeRow">12:00pm</div>
+                <div class="logColWrap lcWrap-Breadsticks"></div>
+            </div>
+            <div class="logCol" id="logCol-13">
+                <div class="row logTimeRow">1:00pm</div>
+                <div class="logColWrap lcWrap-Pizza"></div>
+                <div class="row logTimeRow">1:00pm</div>
+                <div class="logColWrap lcWrap-Calzone"></div>
+                <div class="row logTimeRow">1:00pm</div>
+                <div class="logColWrap lcWrap-Breadsticks"></div>
+            </div>
+            <div class="logCol" id="logCol-14">
+                <div class="row logTimeRow">2:00pm</div>
+                <div class="logColWrap lcWrap-Pizza"></div>
+                <div class="row logTimeRow">2:00pm</div>
+                <div class="logColWrap lcWrap-Calzone"></div>
+                <div class="row logTimeRow">2:00pm</div>
+                <div class="logColWrap lcWrap-Breadsticks"></div>
+            </div>
+            <div class="logCol" id="logCol-15">
+                <div class="row logTimeRow">3:00pm</div>
+                <div class="logColWrap lcWrap-Pizza"></div>
+                <div class="row logTimeRow">3:00pm</div>
+                <div class="logColWrap lcWrap-Calzone"></div>
+                <div class="row logTimeRow">3:00pm</div>
+                <div class="logColWrap lcWrap-Breadsticks"></div>
+            </div>
+            <div class="logCol" id="logCol-16">
+                <div class="row logTimeRow">4:00pm</div>
+                <div class="logColWrap lcWrap-Pizza"></div>
+                <div class="row logTimeRow">4:00pm</div>
+                <div class="logColWrap lcWrap-Calzone"></div>
+                <div class="row logTimeRow">4:00pm</div>
+                <div class="logColWrap lcWrap-Breadsticks"></div>
+            </div>
+            <div class="logCol" id="logCol-17">
+                <div class="row logTimeRow">5:00pm</div>
+                <div class="logColWrap lcWrap-Pizza"></div>
+                <div class="row logTimeRow">5:00pm</div>
+                <div class="logColWrap lcWrap-Calzone"></div>
+                <div class="row logTimeRow">5:00pm</div>
+                <div class="logColWrap lcWrap-Breadsticks"></div>
+            </div>
+            <div class="logCol" id="logCol-18">
+                <div class="row logTimeRow">6:00pm</div>
+                <div class="logColWrap lcWrap-Pizza"></div>
+                <div class="row logTimeRow">6:00pm</div>
+                <div class="logColWrap lcWrap-Calzone"></div>
+                <div class="row logTimeRow">6:00pm</div>
+                <div class="logColWrap lcWrap-Breadsticks"></div>
+            </div>
+            <div class="logCol" id="logCol-19">
+                <div class="row logTimeRow">7:00pm</div>
+                <div class="logColWrap lcWrap-Pizza"></div>
+                <div class="row logTimeRow">7:00pm</div>
+                <div class="logColWrap lcWrap-Calzone"></div>
+                <div class="row logTimeRow">7:00pm</div>
+                <div class="logColWrap lcWrap-Breadsticks"></div>
+            </div>
+            <div class="logCol" id="logCol-20">
+                <div class="row logTimeRow">8:00pm</div>
+                <div class="logColWrap lcWrap-Pizza"></div>
+                <div class="row logTimeRow">8:00pm</div>
+                <div class="logColWrap lcWrap-Calzone"></div>
+                <div class="row logTimeRow">8:00pm</div>
+                <div class="logColWrap lcWrap-Breadsticks"></div>
+            </div>
+            <div class="logCol" id="logCol-21">
+                <div class="row logTimeRow">9:00pm</div>
+                <div class="logColWrap lcWrap-Pizza"></div>
+                <div class="row logTimeRow">9:00pm</div>
+                <div class="logColWrap lcWrap-Calzone"></div>
+                <div class="row logTimeRow">9:00pm</div>
+                <div class="logColWrap lcWrap-Breadsticks"></div>
+            </div>
+            <div id="logMoveControlWrap">
+            	<div class="move-left"><h2><span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span></h2></div>
+                <div id="logTitle">Today</div>
+                <div class="move-right"><h2><span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span></h2></div>
+
+            </div>
+      	</div>
+    </div>
+
+    <!-- Content: Settings -->
+    <div id="eptl-contentWrap-settings" class="eptl-contentWrapper">
+    	<div id="eptlContent-settings-General" class="eptlSettingsContentWrap">
+        	<h1>General Settings</h1>
+            <hr>
+            <div class="eptlSetting"><strong>Group items by:</strong> &nbsp;
+            	<div class="btn-group" role="group" id="eptlSetting-groupItems" aria-label="eptlSetting-groupItems">
+              	<button type="button" class="btn btn-lg btn-info">Time</button>
+                  <button type="button" class="btn btn-lg btn-default">Category</button>
+              </div>
+              <div class="eptlSubSetting eptlSubSetting-groupItems">
+              	<input type="checkbox" id="eptlSetting-qTimeBlocks"> &nbsp; <label for="eptlSetting-qTimeBlocks">15-min Time Blocks</label>
+              </div>
+            </div>
+            <div class="eptlSetting">
+            	<input type="checkbox" id="eptlSetting-newItemsTop"> &nbsp; <label for="eptlSetting-newItemsTop">New Items on Top</label>
+            </div>
+            <div class="eptlSetting">
+            	<input type="checkbox" id="eptlSetting-showOutTime"> &nbsp; <label for="eptlSetting-showOutTime">Show Out Time</label>
+            </div>
+            <div class="eptlSetting">
+            	<input type="checkbox" id="eptlSetting-alertExpiredItems"> &nbsp; <label for="eptlSetting-alertExpiredItems">Alert Expired Items</label>
+            </div>
+            <div class="eptlSetting">
+            	<p id="eptlVersion"></p>
+            </div>
+        </div>
+        <div id="eptlContent-settings-Stats" class="eptlSettingsContentWrap">
+        	<h1>Stats</h1>
+          <button type="button" class="btn btn-info btn-lg" id="btnRefreshStats">Refresh</button>
+          <hr>
+          <p><strong>APK Version:</strong> &nbsp; &nbsp; <span id="statsApkVersion">1.5</span></p>
+          <p><strong>Software Version:</strong> &nbsp; &nbsp; <span id="statsVersion"></span></p>
+          <p><strong>Store:</strong> &nbsp; &nbsp; <span id="statsStore"></span></p>
+          <p><strong>Finished Opening:</strong> &nbsp; &nbsp; <span id="statsFinishedOpening"></span></p>
+          <p><strong>App running since:</strong> &nbsp; &nbsp; <span id="statsRunningSince"></span></p>
+          <p><strong>Last user activity:</strong> &nbsp; &nbsp; <span id="statsLastUserAction"></span></p>
+          <p><strong>Last item added:</strong> &nbsp; &nbsp; <span id="statsLastItemAdded"></span></p>
+          <p><strong>Last sync:</strong> &nbsp; &nbsp; <span id="statsLastSync"></span></p>
+          <p><strong>Last fold:</strong> &nbsp; &nbsp; <span id="statsLastFold"></span></p>
+          <p><strong>Last updated:</strong> &nbsp; &nbsp; <span id="statsLastUpdated"></span></p>
+          <p><strong>Last check for updates:</strong> &nbsp; &nbsp; <span id="statsLastCfu"></span></p>
+          <p><strong>WebSocket:</strong> &nbsp; &nbsp; <span id="statsWsStatus"></span><span id="statsWsConnectedSince"></span></p>
+          <p><strong>Device State:</strong> &nbsp; &nbsp; <span id="statsDeviceState"></span></p>
+        </div>
+        <div id="eptlContent-settings-Items" class="eptlSettingsContentWrap">
+        	<h1>Item Settings</h1>
+            <hr>
+            <div class="eptlSetting">
+            	<strong>Default Breadsticks Quantity:</strong> &nbsp;
+                <input type="number" maxlength="2" id="eptlSetting-defaultBsticksQty">
+            </div>
+            <br>
+            <p style="font-style:italic">Ability to add/edit custom items will eventually go here...</p>
+        </div>
+        <div id="eptlContent-settings-Advanced" class="eptlSettingsContentWrap">
+        	<h1>Advanced Settings</h1>
+            <hr>
+            <div class="eptlSetting">
+            	<strong>Days to Keep Local Data:</strong> &nbsp;
+                <input type="number" maxlength="2" id="eptlSetting-daysLocalData">
+                <button type="button" class="btn btn-info btn-lg" id="btnFoldNow">Refresh</button>
+                <span id="foldStatus">Refreshing local data...</span>
+            </div>
+            <div class="eptlSetting">
+            	<label for="eptlSetting-syncPath">Sync Path:</label> &nbsp;
+                <div id="syncPathWrap">
+                    <div class="input-group">
+                      <span class="input-group-addon" id="syncPathPre">https://</span>
+                      <input type="text" class="form-control" id="eptlSetting-syncPath" aria-describedby="syncPathPre">
+                    </div>
+                </div>
+            </div>
+            <div class="eptlSetting">
+            	<strong>Sync Time:</strong> &nbsp;
+                <input type="number" class="form-control" id="syncTimeHour" maxlength="2"> :
+                <input type="number" class="form-control" id="syncTimeMins" maxlength="2">
+            </div>
+            <div class="eptlSetting">
+            	<strong>Last Synced:</strong> &nbsp; &nbsp; <span id="lastSyncTime">Never</span>
+                <button type="button" class="btn btn-info btn-lg" id="btnSyncNow">Force Sync Now</button>
+            </div>
+            <div class="eptlSetting">
+              <strong>Alerts Override Volume:</strong> &nbsp; &nbsp;
+              <div class="btn-group" role="group" id="eptlSetting-alertVolume" aria-label="eptlSetting-alertVolume">
+              	<button type="button" class="btn btn-lg btn-info">Yes</button>
+                  <button type="button" class="btn btn-lg btn-default">No</button>
+              </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Edit Item -->
+<div id="dlg-editItem" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content panel-danger">
+      <div class="modal-header panel-heading">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Edit Item: <span id="dlg-editItem-title"></span></h4>
+      </div>
+      <div id="dlg-editItem-body" class="modal-body">
+      	<button type="button" class="btn btn-danger btn-lg" id="btnEditItem-Remove" data-dismiss="modal">
+        	<span class="glyphicon glyphicon-remove" aria-hidden="true"></span> &nbsp; Remove Item
+        </button>
+        <input type="hidden" id="dlg-editItem-callerId">
+        <p>
+        	<strong>Quantity:</strong> &nbsp;
+            <input type="number" class="form-control" id="dlg-editItem-qty">
+        </p>
+        <div id="dlg-editItem-Pizza-hh">
+        	<strong>1/2:</strong>
+            <button type="button" id="dlg-editItem-Pizza-hhLeft" class="btn btn-default btn-lg dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+            <ul class="dropdown-menu" id="hhPizza-dropdown"></ul>
+            &nbsp; &nbsp;
+            <strong>1/2:</strong>
+            <button type="button" id="dlg-editItem-Pizza-hhRight" class="btn btn-default btn-lg dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+        </div>
+        <p id="dlg-editItem-timeWrap">
+        	<strong>Time:</strong> &nbsp;
+        	<input type="number" class="form-control" id="dlg-editItem-timeHr" maxlength="2"> :
+            <input type="number" class="form-control" id="dlg-editItem-timeMin" maxlength="2">
+            <button type="button" class="btn btn-lg btn-warning" id="dlg-editItem-timeAmPm">am</button>
+        </p>
+        <br>
+        <div id="dlg-editItem-alert" class="alert alert-info"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="btnEditItem-Cancel" class="btn btn-default btn-lg" data-dismiss="modal">Cancel</button>
+        &nbsp;
+        <button type="button" id="btnEditItem-Save" class="btn btn-primary btn-lg">
+        	<span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Save Changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Alert Expired Item -->
+<div id="dlg-expiredItems" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content panel-danger">
+      <div class="modal-header panel-heading">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Expired Items</h4>
+      </div>
+      <div id="dlg-expiredItems-body" class="modal-body">
+      	<p>The following items were made 4+ hours ago and must now be discarded if they still exist:</p>
+        <ul id="expiredItemsList"></ul>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default btn-lg" data-dismiss="modal">OK</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Opening Alert -->
+<div id="dlg-openingAlert" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content panel-danger">
+      <div class="modal-header panel-heading">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Reminder - Add Items</h4>
+      </div>
+      <div id="dlg-openingAlert-body" class="modal-body">
+      	<h3>Don't forget to add the items you've already made to the log!</h3>
+        <br><br>
+        <p style="font-size:1.5em">Once you have finished setting up the window, you can disable these alerts by pressing the green button below.</p>
+      </div>
+      <div class="modal-footer" id="dlg-openingAlert-footer">
+        <button type="button" id="btnFinishedOpening" class="btn btn-lg btn-success" data-dismiss="modal">Finished Opening</button>
+        <button type="button" class="btn btn-default btn-lg" data-dismiss="modal">OK, got it!</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Enter Passcode -->
+<div id="dlg-enterPasscode" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content panel-danger">
+      <div class="modal-header panel-heading">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Passcode Required</h4>
+      </div>
+      <div id="dlg-enterPasscode-body" class="modal-body">
+      	<p style="">You must have permission to access this section!</p>
+        <p><label for="eptlAdminPasscode">Please enter the admin passcode:</label> &nbsp; <input id="eptlAdminPasscode" type="number"></p>
+        <br>
+        <span class="label label-warning" id="enterPassResult"></span>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default btn-lg" data-dismiss="modal">Back</button>
+        <button type="button" class="btn btn-default btn-lg" id="btnCheckPasscode">Continue</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Javascripts -->
+<script src="js/cordova.js"></script>
+<script src="js/jquery-1.11.3.min.js"></script>
+<script src="js/jquery.sticky.js"></script>
+<script src="js/bootstrap.js"></script>
+<script src="js/bootstrap-slider.min.js"></script>
+<script src="js/socket.io.js"></script>
+<script src="js/eptl.js?v=0727201154"></script>
+</body>
+</html>

@@ -1,0 +1,121 @@
+(#) 1.0.9 -> 1.1
+* Changed overall color scheme
+* Added slider to change breadsticks quantity
+* Bug fixes
+
+
+
+
+(#) 1.1 -> 1.2		[06/14/2017]
+* Added sound alerts for expired items
+* Added reminder to add log items during opening hours
+* Viewing logs will now cache remote server data locally
+* Viewing logs will no longer attempt to fetch from remote server if no store is set
+* Bug fixes
+
+
+
+
+(#) 1.2 -> 1.3		[11/16/2017]
+* Disabled volume down button
+* Added setting to determine whether expired item alerts & opening reminders will automatically set volume to maximum
+* Tapping on the clock 5 times within 1.2 seconds will prompt for passcode to mute volume
+* Changed the “Add Items” layout (items are no longer listed in the left column)
+* Breadsticks quantity slider will now auto-snap to increments of 12
+* Log view left column will now only display a total of 10 rows
+* Log view bottom arrows will now navigate the selected date
+* App will return to default state (Add Items screen) after 5 minutes of inactivity
+* Beeps will stop when app is paused and resume once the app becomes active again
+
+
+
+
+(#) 1.3 -> 1.4		[01/12/2018]
+* Bug fix: The "add items" page will now correctly display the hours between 12am-3am
+* Bug fix: Items added in the 9am hour block can now be removed
+* Bug fix: Item added notifications will no longer overlap the item buttons
+* An error message will now be displayed when attempting to add items outside of 9am-9pm
+* Any open dialogs will be closed when the localStorage is initialized for the next day
+
+
+
+
+(#) 1.4 -> 1.4.1	[02/08/2019]
+* Added "mushroom" varieties to the list of pizzas
+    + Mushroom
+    + Pepperoni & Mushroom
+    + Sausage & Mushroom
+
+
+
+
+(#) 1.4.1 -> 1.4.2		[08/08/2019]
+* Implemented "forceOverwriteLocalData" functionality
+* Implemented initial functionality for remote control via WebSocket
+
+
+
+
+(#) 1.4.2 -> 1.5		[08/15/2019]
+* Implemented self-update functionality within the app (no longer need to update the binary via Amazon app store)
+* Added setting "version" to eptlSettings
+* Saving settings will now update remote status
+* Implemented remote viewing of local data
+* Implemented ability to force remote update
+* TODO: Add option to FOLD to include today (sync first to preserve data)
+
+
+
+
+(#) 1.5 -> 1.5.1		[08/19/2019]
+* Implemented callback for ForceCheckForUpdates
+* ForceCheckForUpdates will now correctly update the version property of appSettings
+* Version property will now be correctly set via eptlVersion.txt
+
+
+
+
+(#) 1.5.1 -> 1.5.2		[08/20/2019]
+* Implemented eptlStats
+* Moved property "lastSync" from eptlSettings to eptlStats
+
+
+
+
+(#) 1.5.2 -> 1.5.3    [08/21/2019]
+* Revisions to eptlStats
+* Improvements to the self-updating system
+
+
+
+
+(#) 1.5.3 -> 1.5.4    [08/29/2019]
+* Added stat "deviceState" to eptlStats
+* Implemented remote viewing of eptlStats
+* Added ability to force client restart from remote
+* Added ability to force client syncData from remote
+* eptlSocket will now connect explicitly on the WebSocket protocol
+* Bug fix: eptlStats will no longer be removed by function lsCleanup
+* Bug fix: Internal click actions will no longer trigger lastUserAction
+* Bug fix: Adding items will correctly update lastItemAdded stat on remote
+* Bug fix: App idle will correctly collapse expanded sections when resetting to default view
+
+
+
+
+(#) 1.5.4 -> 1.6      [08/30/2019]
+* Left bar is now fixed and will no longer scroll
+* Add Items category wrappers are now fixed and will display correctly regardless of scroll position
+* Add Items Time Block column headers are now fixed
+* Add Items page will now correctly scroll based on setting "New Items Top"
+
+
+
+
+(#) 1.6 -> 1.7        [12/17/2020]
+* Removed Pep Romano Breadsticks
+* Removed Cinnamon Breadsticks
+* Removed Beef Roll
+* Removed Sausage Roll
+* Removed Meatball Roll
+* Removed Italian Roll
